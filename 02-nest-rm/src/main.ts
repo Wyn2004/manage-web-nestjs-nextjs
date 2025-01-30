@@ -1,14 +1,22 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as dotenv from 'dotenv'; // Import dotenv
 import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
 
-dotenv.config({ path: '.env.dev' }); // Chỉ định file .env.dev
-
+require('dotenv').config({ path: '.env.dev' });
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // cài frefix api và loại trừ
+  app.setGlobalPrefix('api/v1', { exclude: [''] });
+  // Cai middleware validation
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  );
   const configService = app.get(ConfigService);
-  const port = configService.get('PORT');
-  await app.listen(port ?? 3000);
+  const port = configService.get('PORT_LOCAL');
+
+  await app.listen(port);
 }
 bootstrap();
