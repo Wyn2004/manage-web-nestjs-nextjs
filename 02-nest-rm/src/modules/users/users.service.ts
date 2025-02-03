@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import mongoose, { Model } from 'mongoose';
-import { hashPassword } from 'helpers/utils';
+import { hashPassword } from '@/helpers/utils';
 import aqp from 'api-query-params';
 
 @Injectable()
@@ -83,6 +83,26 @@ export class UsersService {
     } catch (error) {
       if (error instanceof mongoose.Error.CastError) {
         throw new BadRequestException('Id is invalid');
+      }
+      throw error;
+    }
+  }
+
+  async findByEmail(email: string) {
+    try {
+      if (!email) {
+        throw new BadRequestException('Email is required');
+      }
+      const response = await this.userModel
+        .findOne({ email })
+        .select('+password');
+      if (!response) {
+        throw new BadRequestException('User not found');
+      }
+      return response;
+    } catch (error) {
+      if (error instanceof mongoose.Error.CastError) {
+        throw new BadRequestException('Email is invalid');
       }
       throw error;
     }
