@@ -5,6 +5,7 @@ import { LoginDTO } from './dto/login-auth.dto';
 import { comparePassword } from '@/helpers/utils';
 import { JwtService } from '@nestjs/jwt';
 import { access, stat } from 'fs';
+import { RegisterDTO } from './dto/register-auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -40,5 +41,9 @@ export class AuthService {
       }
       throw error;
     }
+  }
+
+  async signUp(registerDTO: RegisterDTO) {
+    return this.usersService.signUp(registerDTO);
   }
 }

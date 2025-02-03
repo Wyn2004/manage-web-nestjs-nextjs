@@ -6,6 +6,9 @@ import { User } from './schemas/user.schema';
 import mongoose, { Model } from 'mongoose';
 import { hashPassword } from '@/helpers/utils';
 import aqp from 'api-query-params';
+import { RegisterDTO } from '@/auth/dto/register-auth.dto';
+import { v4 as uuidv4 } from 'uuid';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class UsersService {
@@ -157,5 +160,29 @@ export class UsersService {
       }
       throw error;
     }
+  }
+
+  async signUp(registerDTO: RegisterDTO) {
+    const { name, email, password } = registerDTO;
+    const hashPass = hashPassword(password);
+    // tao doi tuong user
+    if (await this.isExist(email)) {
+      throw new BadRequestException('This email is exist!!!');
+    }
+    const user = await this.userModel.create({
+      name,
+      email,
+      password: hashPass,
+      isActive: 'false',
+      codeId: uuidv4(),
+      codeExpired: dayjs().add(5, 'minute'),
+    });
+
+    // tra ve
+    return {
+      user,
+    };
+
+    // gui mail
   }
 }
