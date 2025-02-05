@@ -17,6 +17,9 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/passport/jwt-auth.guard';
 
+import { MailerModule } from '@nestjs-modules/mailer';
+import { config } from 'process';
+
 @Module({
   imports: [
     UsersModule,
@@ -28,6 +31,8 @@ import { JwtAuthGuard } from './auth/passport/jwt-auth.guard';
     OrdersModule,
     RestaurantsModule,
     ReviewsModule,
+    AuthModule,
+
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -36,7 +41,36 @@ import { JwtAuthGuard } from './auth/passport/jwt-auth.guard';
       }),
       inject: [ConfigService],
     }),
-    AuthModule,
+
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        transport: {
+          pool: true,
+          host: configService.get<string>('DEV_EMAIL_HOST'),
+          port: +configService.get<string>('DEV_EMAIL_PORT'),
+          secure: true,
+          // ignoreTLS: true,
+          // secure: false,
+          auth: {
+            user: configService.get<string>('DEV_EMAIL_NAME'),
+            pass: configService.get<string>('DEV_EMAIL_PASSWORD'),
+          },
+        },
+        defaults: {
+          from: '"No Reply" <no-reply@localhost>',
+        },
+        // preview: true,
+        // template: {
+        //   dir: process.cwd() + '/template/',
+        //   adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
+        //   options: {
+        //     strict: true,
+        //   },
+        // },
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
   providers: [
