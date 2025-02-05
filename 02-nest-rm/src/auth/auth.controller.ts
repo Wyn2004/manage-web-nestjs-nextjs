@@ -47,10 +47,14 @@ export class AuthController {
         to: 'testmailthang@gmail.com',
         from: 'noreply@nestjs.com',
         subject: 'Testing Nest MailerModule ✔',
-        text: 'welcome',
-        html: '<b>welcome</b>',
+        template: 'register',
+        text: 'Welcome',
+        context: {
+          name: 'wyn',
+          activationCode: '123',
+        },
       });
-      return 'Email sent successfully';
+      return 'Email sent successfully!';
     } catch (error) {
       console.error('Error sending email:', error);
       throw new Error('Failed to send email');

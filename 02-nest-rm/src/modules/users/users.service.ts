@@ -9,10 +9,14 @@ import aqp from 'api-query-params';
 import { RegisterDTO } from '@/auth/dto/register-auth.dto';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private readonly mailerService: MailerService,
+  ) {}
   isExist = async (email: string): Promise<boolean> => {
     const user = await this.userModel.exists({ email });
     return !!user;
@@ -165,24 +169,40 @@ export class UsersService {
   async signUp(registerDTO: RegisterDTO) {
     const { name, email, password } = registerDTO;
     const hashPass = hashPassword(password);
+
+    const codeId = uuidv4();
+
     // tao doi tuong user
     if (await this.isExist(email)) {
       throw new BadRequestException('This email is exist!!!');
     }
+
     const user = await this.userModel.create({
       name,
       email,
       password: hashPass,
       isActive: 'false',
-      codeId: uuidv4(),
-      codeExpired: dayjs().add(5, 'minute'),
+      codeId: codeId,
+      // codeExpired: dayjs().add(5, 'minute'),
+      codeExpired: dayjs().add(30, 'seconds'),
+    });
+
+    // gui mail
+    this.mailerService.sendMail({
+      to: user.email,
+      from: 'noreply@nestjs.com',
+      subject: 'Testing Nest MailerModule ✔',
+      template: 'register',
+      text: 'Welcome',
+      context: {
+        name: user?.name || user.email,
+        activationCode: codeId,
+      },
     });
 
     // tra ve
     return {
       user,
     };
-
-    // gui mail
   }
 }
