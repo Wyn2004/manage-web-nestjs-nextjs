@@ -34,12 +34,23 @@
 11. Cài đặt JWT passport
     npm install --save-exact passport-jwt@4.0.1
     npm install --save-dev @types/passport-jwt@4.0.1
+12. Cài uuid và dayjs
+    npm install --save-exact uuid@11.0.5 dayjs@1.11.13
 
 --- Databse
 
-12. Cài đặt thư viện mongoose
+13. Cài đặt thư viện mongoose
     npm i @nestjs/mongoose@11.0.0
     (Config lại ở file app.module.ts)
     https://docs.nestjs.com/techniques/mongodb
-13. Cài thư viện để lấy param mongoDb
+14. Cài thư viện để lấy param mongoDb
     npm i --save-exact api-query-params@5.4.0
+
+--- Email
+
+1. Cài đặt node mailer
+   https://nest-modules.github.io/mailer/docs/mailer.html
+   npm install --save-exact @nestjs-modules/mailer@2.0.2 nodemailer@6.10.0 @types/nodemailer@6.4.17 handlebars@4.7.8
+2. Cài đặt template ....
+3. Cấu hình lại nest-cli.json
+   https://notiz.dev/blog/send-emails-with-nestjs
