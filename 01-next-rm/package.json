@@ -13,8 +13,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.6.0",
     "@ant-design/nextjs-registry": "1.0.2",
-    "antd": "5.23.1",
+    "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "next": "15.1.5",
     "react": "19.0.0",
     "react-dom": "19.0.0"
@@ -22,7 +23,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "3.2.0",
     "@types/node": "22.10.7",
-    "@types/react": "19.0.7",
+    "@types/react": "z",
     "@types/react-dom": "19.0.3",
     "eslint": "9.18.0",
     "eslint-config-next": "15.1.5",
